@@ -5,16 +5,12 @@ import java.awt.*;
 // parent class for all game objects
 public abstract class GameObject {
 
-    protected int x, y, width, height;  // initialize objects environmental position variable
+    protected float x, y, width, height;  // initialize objects environmental position variable
+    protected GameObjectID id;            // initialize object ID enum
+    protected Handler handler;            // initialize object handler variable
+    protected float velX, velY;           // initialize object speed variable
 
-    protected GameObjectID id;          // initialize object ID enum
-
-    protected Handler handler;          // initialize object handler variable
-
-    protected int velX, velY;           // initialize object speed variable
-
-
-    public GameObject(int x, int y, GameObjectID id, Handler handler) { // root game object constructor
+    public GameObject(float x, float y, GameObjectID id, Handler handler) { // root game object constructor
         this.x = x;
         this.y = y;
         this.id = id;
@@ -25,19 +21,18 @@ public abstract class GameObject {
     public abstract void render(Graphics g);    // object rendering method
     public abstract Rectangle getBounds();      // method that sets bounds for object collision
 
-
     // getter and setter methods, possibly redundant
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public void setY(int y) { this.y = y; }
+    public void setY(float y) { this.y = y; }
 
-    public void setVelX(int velX) {
+    public void setVelX(float velX) {
         this.velX = velX;
     }
 
-    public void setVelY(int velY) {
+    public void setVelY(float velY) {
         this.velY = velY;
     }
 
@@ -45,19 +40,19 @@ public abstract class GameObject {
         this.id = id;
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
-    public int getVelX() {
+    public float getVelX() {
         return velX;
     }
 
-    public int getVelY() {
+    public float getVelY() {
         return velY;
     }
 

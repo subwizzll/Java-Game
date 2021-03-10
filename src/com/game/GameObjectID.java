@@ -4,6 +4,8 @@ public enum GameObjectID { // this class enables us to define unique characteris
                            // of the same Game Object child class
     Player(),
     Enemy(),
+    SmartEnemy(),
+    EnemyBossJR(),
     Trail()
 
 }

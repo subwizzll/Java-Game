@@ -11,7 +11,6 @@ public class Handler {
     public void tick(){                                 // syncronize all GameObjects in object list with game loop
        for(int i = 0; i < object.size(); i++){
            GameObject tempObject = object.get(i);
-
            tempObject.tick();
        }
     }
@@ -19,7 +18,6 @@ public class Handler {
     public void render(Graphics g){                     // renders all GameObjects in object list
         for(int i = 0; i < object.size(); i++) {
             GameObject tempObject = object.get(i);
-
             tempObject.render(g);
         }
     }
@@ -30,5 +28,15 @@ public class Handler {
 
     public void removeObject(GameObject object){        // removes objects from object list
         this.object.remove(object);
+    }
+
+    public void clearEnemies(){
+        for (int i = 0; i < object.size(); i++) {
+            if (object.get(i).getId() == GameObjectID.Enemy ||
+                    object.get(i).getId() == GameObjectID.SmartEnemy) {
+                object.remove(i);
+                i = -1;
+            }
+        }
     }
 }
