@@ -71,6 +71,7 @@ public class Menu extends MouseAdapter {
     }
 
     public void render(Graphics g) {
+
         int width, height;
         Font fnt = new Font("courier new", 1, 70);
         Font fnt2 = new Font("courier new", 1, 30);
@@ -109,6 +110,9 @@ public class Menu extends MouseAdapter {
             width = g.getFontMetrics().stringWidth("HowToPlay");
             g.drawString("HowToPlay", (int) game.WIDTH / 2 - width / 2, (int) game.HEIGHT / 100 * 15);
             g.setFont(fnt2);
+            String helpText = "Move your player with the WASD keys, press Esc to quit.";
+            width = g.getFontMetrics().stringWidth(helpText);
+            g.drawString(helpText, (int) game.WIDTH / 2 - width / 2, (int) game.HEIGHT / 2);
 
             for (int i = 0; i < menuText[2].length; ++i) {
                 g.drawRect(buttonX, buttonY + offsetY * i, buttonWidth, buttonHeight);
@@ -119,4 +123,5 @@ public class Menu extends MouseAdapter {
             }
         }
     }
+
 }
