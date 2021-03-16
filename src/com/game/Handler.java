@@ -16,10 +16,20 @@ public class Handler {
     }
 
     public void render(Graphics g){                     // renders all GameObjects in object list
-        for(int i = 0; i < object.size(); i++) {
-            GameObject tempObject = object.get(i);
-            tempObject.render(g);
+        LinkedList<GameObject> nonTrails = new LinkedList<GameObject>();
+        GameObject tempObject;
+        for(int i = 0; i < object.size(); i++) {        // this for loop filters out all objects that are not Trails
+            tempObject = object.get(i);
+            if(tempObject.id != GameObjectID.Trail){
+                nonTrails.add(object.get(i));
+            }
+            tempObject.render(g);                       // they are rendered here
         }
+        for(int i = 0; i < nonTrails.size(); i++){
+            tempObject = object.get(i);
+            tempObject.render(g);                       // all remaining objects are rendered here on top of the Trails
+        }
+        nonTrails.clear();                              // empties list of non Trail objects
     }
 
     public void addObject(GameObject object){           // adds objects to object list
@@ -30,12 +40,20 @@ public class Handler {
         this.object.remove(object);
     }
 
-    public void clearEnemies(){
+    public void clearEnemies(){ //TODO clear all enemies without explicitly specifying them
         for (int i = 0; i < object.size(); i++) {
             if (object.get(i).getId() == GameObjectID.Enemy ||
                     object.get(i).getId() == GameObjectID.SmartEnemy) {
                 object.remove(i);
                 i = -1;
+            }
+        }
+    }
+
+    public void removePlayer(){
+        for (int i = 0; i < object.size(); i++) {
+            if (object.get(i).getId() == GameObjectID.Player) {
+                object.remove(i);
             }
         }
     }

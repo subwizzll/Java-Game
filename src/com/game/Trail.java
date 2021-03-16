@@ -6,14 +6,15 @@ public class Trail extends GameObject{      // this class defines the characteri
 
     private float alpha = 1;                // this variable defines trailing objects transparency value
     private float life;                     // this variable is used to decrement transparency within the tick() method
+    private Color color;
 
-    public Trail(float x, float y, GameObjectID id, Handler handler, float life) {
-        super(x, y, id, handler);
+    public Trail(float x, float y,
+                 float width, float height,
+                 float vel, GameObjectID id,
+                 Handler handler, Game game, float life, Color color) {
+        super(x, y, width, height, vel, id, handler, game);
         this.life = life;
-
-        width = 16;
-        height = 16;
-
+        this.color = color;
     }
 
     @Override
@@ -28,8 +29,8 @@ public class Trail extends GameObject{      // this class defines the characteri
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(makeTransparent(alpha));
 
-        g.setColor(Color.BLUE);
-        g.fillRect((int)x,(int)y,(int)width,(int)height);
+        g.setColor(color);
+        g.fillOval((int)x-(int)width/2,(int)y-(int)height/2,(int)width,(int)height);
 
         g2d.setComposite(makeTransparent(1));
     }

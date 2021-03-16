@@ -6,10 +6,12 @@ import java.awt.event.KeyEvent;
 public class KeyInput extends KeyAdapter {
 
     private Handler handler;                    // initialize object handler for assigning key inputs
+    private Game game;
     private boolean[] keyPressed = new boolean[] {false, false, false, false};
 
-    public KeyInput(Handler handler){           // method for receiving object handler
-        this.handler = handler;                 //
+    public KeyInput(Handler handler, Game game){           // method for receiving object handler
+        this.handler = handler;                             //
+        this.game = game;
     }
 
     @Override
@@ -41,7 +43,11 @@ public class KeyInput extends KeyAdapter {
                 if(!keyPressed[2] && !keyPressed[3]) tempObject.setVelX(0);
             }
         }
-
-        if(key == KeyEvent.VK_ESCAPE) System.exit(1);           // close game window with escape key
+        if(key == KeyEvent.VK_ESCAPE){
+            if(!Game.paused) Game.paused = true;
+            else Game.paused = false;
+        }
+//        if(key == KeyEvent.VK_ESCAPE && game.paused) game.paused = false;
+//        if(key == KeyEvent.VK_ESCAPE) System.exit(1);           // close game window with escape key
     }
 }

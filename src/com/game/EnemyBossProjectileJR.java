@@ -2,14 +2,15 @@ package com.game;
 
 import java.awt.*;
 
-public class Enemy extends GameObject {      // this class defines the characteristics of a basic enemy object
+public class EnemyBossProjectileJR extends GameObject {      // this class defines the characteristics of a basic enemy object
 
-    public Enemy(float x, float y,
-                 float width, float height,
-                 float vel, GameObjectID id,
-                 Handler handler, Game game) {
+    public EnemyBossProjectileJR(float x, float y,
+                                 float width, float height,
+                                 float vel, GameObjectID id,
+                                 Handler handler, Game game) {
 
         super(x, y, width, height, vel, id, handler, game);
+        velY = 3;
 
     }
 
@@ -23,8 +24,9 @@ public class Enemy extends GameObject {      // this class defines the character
         x += velX;
         y += velY;
 
-        if(x <= 0 || x >= Game.WIDTH - 16) velX *= -1;  // prevents object from leaving the window
-        if(y <= 0 || y >= Game.HEIGHT - 32) velY *= -1; //
+        if(x <= 0 || x >= Game.WIDTH - width) velX *= -1;  // prevents object from leaving the window
+        if(y >= Game.HEIGHT - height) velY *= -1;           //
+        if(x == 0) handler.removeObject(this);
 
         ticker++;
         if (ticker == 10){
