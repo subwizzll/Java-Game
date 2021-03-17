@@ -8,10 +8,10 @@ public class HUD {                              // this class characterises the 
     public float greenValue = 255;              //
     public float redValue = 0;                  //
     private int score = 0;                      // score variable
-    private int level = 1;                      // level variable
+    private int level = 0;                      // level variable
 
     public void tick(){                         // refresh health value
-        score++;
+        score++;//TODO implement different scoring system
         health = Game.clamp(health,0,100); // prevents health from going to a negative value
         greenValue = health * 255 / 100;             // transitions health from green to red
         redValue = 255 - greenValue;                 //
