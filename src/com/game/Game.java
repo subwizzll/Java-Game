@@ -20,7 +20,7 @@ public class Game extends Canvas implements Runnable{
     private boolean running = false;              //
     private BufferedImage[][] wallImage = new BufferedImage[(int)HEIGHT/64][(int)WIDTH/64];
     private BufferedImage spriteSheet = null;
-    private BufferedImage spriteSheet2 = null;
+    private BufferedImage backGround;
     private Handler handler;                      // initialize object handler
     private Menu menu;     // initialize menu variable
     private HUD hud;                              // initialize heads up display
@@ -40,7 +40,6 @@ public class Game extends Canvas implements Runnable{
         BufferedImageLoader loader = new BufferedImageLoader();
         try {
             this.spriteSheet = loader.loadImage("resources/0x72_16x16DungeonTileset.v4.png");
-            this.spriteSheet2 = loader.loadImage("resources/0x72_16x16DungeonTileset_walls.v2.png");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -54,7 +53,7 @@ public class Game extends Canvas implements Runnable{
         new Window(WIDTH, HEIGHT, "Let's Build a Game!", this); // call game window
         spawner = new Spawn(handler, hud, this);  // instantiate Spawner class object
         this.addMouseListener(menu);                    // listens for mouse input from the menu
-        setWalls();
+        backGround = setWalls(wallImage);
     }
 
     public synchronized void start(){                   // executes Game thread
@@ -93,7 +92,11 @@ public class Game extends Canvas implements Runnable{
                 delta--;
             }
             if(running){                                // renders new screen if game is still running
-                render();
+                try {
+                    render();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             frames++;                                   // increment frame count
 
@@ -114,7 +117,6 @@ public class Game extends Canvas implements Runnable{
                 hud.tick();                                 //
                 spawner.tick();                             //
                 if (HUD.health <= 0) {
-                    handler.removePlayer();
                     HUD.health = 100;
                     gameState = STATE.GameOver;
                 }
@@ -137,14 +139,8 @@ public class Game extends Canvas implements Runnable{
 
         Graphics g = bs.getDrawGraphics();              // creates a graphics context for the drawing buffer
 
-        for (int h = 0; h <= HEIGHT/64; h++) {
-            for (int w = 0; w < WIDTH/64; w++) {
-                if(h < wallImage.length) {
-                    g.drawImage(wallImage[h][w], w * 64, h * 64, 64, 64, null);
-                }
-            }
-        }
-        handler.render(g);                              // render all game objects
+        g.drawImage(backGround,0,0,null);
+            handler.render(g);                              // render all game objects
 
         if(gameState == STATE.Game && !paused){         // renders proper environment in correspondence with current
             hud.render(g);                              // STATE
@@ -170,14 +166,28 @@ public class Game extends Canvas implements Runnable{
     public BufferedImage getSpriteSheet(){
         return spriteSheet;
     }
-    public BufferedImage getSpriteSheet2(){
-        return spriteSheet2;
-    }
     public static int getRandom(int[][] array) {
         return new Random().nextInt(array.length);
     }
 
-    public void setWalls(){
+    public static BufferedImage joinBufferedImage(BufferedImage[][] img) {
+
+        //create a new buffer and draw two image into the new image
+        BufferedImage newImage = new BufferedImage((int)WIDTH,(int)HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+
+        for (int h = 0; h <= HEIGHT/64; h++) {
+            for (int w = 0; w < WIDTH/64; w++) {
+                if(h < img.length) {
+                    g2.drawImage(img[h][w], w * 64, h * 64, 64, 64, null);
+                }
+            }
+        }
+        g2.dispose();
+        return newImage;
+    }
+
+    public BufferedImage setWalls(BufferedImage[][] img){
         SpriteSheet ss = new SpriteSheet(this.getSpriteSheet());
         int[][] wallCells = new int[][] {{2,2},{2,2},{2,2},{2,2},{2,4},{2,5},{1,4},{1,5}};
         int[][] floorCells1 = new int[][]{{3,1},{3,2},{3,3}};
@@ -185,8 +195,8 @@ public class Game extends Canvas implements Runnable{
         int[][] floorCells3 = new int[][]{{8,1},{8,2},{8,3},{8,4}};
         int[][] floorCells4 = new int[][]{{9,1},{9,2},{9,3},{9,4}};
         int[] cell;
-        for (int row = 0; row < wallImage.length; row++) {
-            for (int col = 0; col < wallImage[row].length; col++) {
+        for (int row = 0; row < img.length; row++) {
+            for (int col = 0; col < img[row].length; col++) {
                 if (row < 2) {
                     cell = wallCells[getRandom(wallCells)];
                     if (row == 0 && (cell == wallCells[4] || cell == wallCells[5])) {
@@ -195,48 +205,49 @@ public class Game extends Canvas implements Runnable{
                         col--;
                     } else if (row == 1 && !(cell == wallCells[0] || cell == wallCells[1]
                             || cell == wallCells[2] || cell == wallCells[3])) {
-                        this.wallImage[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
-                        this.wallImage[row + 1][col] = ss.getImage(3, 4, ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
+                        img[row + 1][col] = ss.getImage(3, 4, ss.getCellSize(), ss.getCellSize());
                     } else {
-                        this.wallImage[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
                     }
                 }else if (row == 2){
                     cell = floorCells1[getRandom(floorCells1)];
-                    if (wallImage[2][col] == null){
-                        this.wallImage[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
+                    if (img[2][col] == null){
+                        img[row][col] = ss.getImage(cell[0], cell[1], ss.getCellSize(), ss.getCellSize());
                     }
                 }else if(row == 3){
                     if (col == 0){
-                        this.wallImage[row][col] = ss.getImage(floorCells2[0][0], floorCells2[0][1], ss.getCellSize(), ss.getCellSize());
-                    }else if (col == wallImage[3].length-1){
-                        this.wallImage[row][col] = ss.getImage(floorCells2[3][0], floorCells2[3][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells2[0][0], floorCells2[0][1], ss.getCellSize(), ss.getCellSize());
+                    }else if (col == img[3].length-1){
+                        img[row][col] = ss.getImage(floorCells2[3][0], floorCells2[3][1], ss.getCellSize(), ss.getCellSize());
                     }else if (col % 2 == 1){
-                        this.wallImage[row][col] = ss.getImage(floorCells2[1][0], floorCells2[1][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells2[1][0], floorCells2[1][1], ss.getCellSize(), ss.getCellSize());
                     }else{
-                        this.wallImage[row][col] = ss.getImage(floorCells2[2][0], floorCells2[2][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells2[2][0], floorCells2[2][1], ss.getCellSize(), ss.getCellSize());
                     }
-                }else if(row > 3 && row < wallImage.length-1){
+                }else if(row > 3 && row < img.length-1){
                     if (col == 0){
-                        this.wallImage[row][col] = ss.getImage(floorCells3[0][0], floorCells3[0][1], ss.getCellSize(), ss.getCellSize());
-                    }else if (col == wallImage[3].length-1){
-                        this.wallImage[row][col] = ss.getImage(floorCells3[3][0], floorCells3[3][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells3[0][0], floorCells3[0][1], ss.getCellSize(), ss.getCellSize());
+                    }else if (col == img[3].length-1){
+                        img[row][col] = ss.getImage(floorCells3[3][0], floorCells3[3][1], ss.getCellSize(), ss.getCellSize());
                     }else if (col % 2 == 1){
-                        this.wallImage[row][col] = ss.getImage(floorCells3[1][0], floorCells3[1][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells3[1][0], floorCells3[1][1], ss.getCellSize(), ss.getCellSize());
                     }else{
-                        this.wallImage[row][col] = ss.getImage(floorCells3[2][0], floorCells3[2][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells3[2][0], floorCells3[2][1], ss.getCellSize(), ss.getCellSize());
                     }
                 }else{
                     if (col == 0){
-                        this.wallImage[row][col] = ss.getImage(floorCells4[0][0], floorCells4[0][1], ss.getCellSize(), ss.getCellSize());
-                    }else if (col == wallImage[3].length-1){
-                        this.wallImage[row][col] = ss.getImage(floorCells4[3][0], floorCells4[3][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells4[0][0], floorCells4[0][1], ss.getCellSize(), ss.getCellSize());
+                    }else if (col == img[3].length-1){
+                        img[row][col] = ss.getImage(floorCells4[3][0], floorCells4[3][1], ss.getCellSize(), ss.getCellSize());
                     }else if (col % 2 == 1){
-                        this.wallImage[row][col] = ss.getImage(floorCells4[1][0], floorCells4[1][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells4[1][0], floorCells4[1][1], ss.getCellSize(), ss.getCellSize());
                     }else{
-                        this.wallImage[row][col] = ss.getImage(floorCells4[2][0], floorCells4[2][1], ss.getCellSize(), ss.getCellSize());
+                        img[row][col] = ss.getImage(floorCells4[2][0], floorCells4[2][1], ss.getCellSize(), ss.getCellSize());
                     }
                 }
             }
         }
+        return joinBufferedImage(img);
     }
 }

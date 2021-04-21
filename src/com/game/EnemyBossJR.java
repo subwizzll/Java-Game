@@ -54,7 +54,7 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
             for (int i = -2; i <= 2; i++) {
                 handler.addObject(new EnemyBossProjectileJR(
                         (int)x+width/2,(int)y+height/2,
-                        16,16,
+                        32,32,
                         (float) i,GameObjectID.EnemyBossProjectileJR,
                         handler, game));
             }

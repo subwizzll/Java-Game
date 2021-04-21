@@ -6,12 +6,14 @@ import java.util.Random;
 
 public class SmartEnemy extends GameObject{     // this class defines the characteristics of a smart enemy object
 
-    private BufferedImage bossBullet;
+    private BufferedImage bulletLg, bulletSm;
+
+    private boolean isSmall = false;
+
     GameObject player;                          // initialize our player variable
     private Random r = new Random();
 
     private boolean tracking = true;
-    private boolean collision = true;
     private int ticker = 0;
 
     public SmartEnemy(float x, float y,
@@ -19,10 +21,12 @@ public class SmartEnemy extends GameObject{     // this class defines the charac
                       float vel, GameObjectID id,
                       Handler handler, Game game) {
         super(x, y, width, height, vel, id, handler, game);
-        if(this.id == GameObjectID.SmartEnemyJR){
-            SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
-            bossBullet = ss.getImage(13,3,16,16);
-        }
+
+        SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
+
+        bulletLg = ss.getImage(13,6,16,16);
+        bulletSm = ss.getImage(14,6,16,16);
+
 
         for (int i = 0; i < handler.object.size(); i++)                 // loop through object list to find our player
             if (handler.object.get(i).getId() == GameObjectID.Player)   // to assign our player to the variable
@@ -31,13 +35,19 @@ public class SmartEnemy extends GameObject{     // this class defines the charac
 
     @Override
     public void tick() {                                // method to synchronize object with game loop
+        if(game.gameState == Game.STATE.GameOver ){
+            tracking = false;
+            x += r.nextInt(1) * velX;
+            y += r.nextInt(1) * velY;
+            return;
+        }
         x += velX;
         y += velY;
         handler.addObject(new Trail(                    // trail effect
                 getCenterX(),getCenterY(),
-                width*.75f,height*.75f,
+                width*.5f,height*.5f,
                 0,GameObjectID.Trail,handler,
-                game,0.1f,Color.orange));
+                game,0.1f,Color.blue));
         if (tracking && player != null) {
             float diffX = this.getCenterX() - player.getCenterX();  // difference between enemy X and player X
             float diffY = this.getCenterY() - player.getCenterY();  // difference between enemy Y and player Y//
@@ -58,6 +68,11 @@ public class SmartEnemy extends GameObject{     // this class defines the charac
         }
         ticker++;
         if (ticker == 10){
+            if(isSmall){
+                isSmall = false;
+            }else{
+                isSmall = true;
+            }
             collision = true;
             ticker = 0;
         }else if (ticker == 12){handler.object.remove(this);}
@@ -65,12 +80,12 @@ public class SmartEnemy extends GameObject{     // this class defines the charac
     }
 
     @Override
-    public void render(Graphics g) {        // object rendering method
-        if(this.id == GameObjectID.SmartEnemyJR){
-            g.drawImage(bossBullet,(int)x,(int)y,(int)width,(int)height,null);
+    public void render(Graphics g) {        // object rendering method and animation logic
+        if (isSmall) {
+            g.drawImage(bulletSm, (int) x, (int) y, (int) width, (int) height, null);
+        } else {
+            g.drawImage(bulletLg, (int) x, (int) y, (int) width, (int) height, null);
         }
-        g.setColor(Color.CYAN);
-        g.fillRect((int)x,(int)y,(int)width,(int)height);
     }
 
     @Override
@@ -79,27 +94,6 @@ public class SmartEnemy extends GameObject{     // this class defines the charac
     }
 
     private void collision(){                // handles collision characteristics for this object
-        if (collision) {
-            for (int i = 0; i < handler.object.size(); i++) {
-                GameObject tempObject = handler.object.get(i);
-                // deflects and disables tracking of a SmartEnemies if they collide with the player or themselves
-                if (tempObject.getId() == GameObjectID.SmartEnemy && tempObject != this) {
-                    if (getBounds().intersectsLine(tempObject.getTop())
-                        ||
-                        getBounds().intersectsLine(tempObject.getBottom())) {
-                        tracking = false;
-                        collision = false;
-                        velY *= -1;
-                    }
-                    if (getBounds().intersectsLine(tempObject.getLeft())
-                        ||
-                        getBounds().intersectsLine(tempObject.getRight())) {
-                        tracking = false;
-                        collision = false;
-                        velX *= -1;
-                    }
-                }
-            }
-        }
+
     }
 }

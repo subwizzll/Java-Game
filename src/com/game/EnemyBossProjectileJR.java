@@ -1,8 +1,13 @@
 package com.game;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class EnemyBossProjectileJR extends GameObject {      // this class defines the characteristics of a basic enemy object
+
+    private BufferedImage bossBulletLg, bossBulletSm;
+
+    private boolean isSmall = false;
 
     public EnemyBossProjectileJR(float x, float y,
                                  float width, float height,
@@ -10,8 +15,13 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
                                  Handler handler, Game game) {
 
         super(x, y, width, height, vel, id, handler, game);
+
         velY = 3;
 
+        SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
+
+        bossBulletLg = ss.getImage(13,4,16,16);
+        bossBulletSm = ss.getImage(14,4,16,16);
     }
 
     @Override
@@ -29,7 +39,12 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
         if(x == 0) handler.removeObject(this);
 
         ticker++;
-        if (ticker == 10){
+        if (ticker == 20){
+            if(isSmall){
+                isSmall = false;
+            }else{
+                isSmall = true;
+            }
             collision = true;
             ticker = 0;
         }
@@ -37,14 +52,17 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
     }
 
     @Override
-    public void render(Graphics g) {        // object rendering method
-        g.setColor(Color.red);
-        g.fillRect((int)x,(int)y,(int)width,(int)height);
+    public void render(Graphics g) {        // object rendering method and animation logic
+        if (isSmall) {
+            g.drawImage(bossBulletSm, (int) x, (int) y, (int) width, (int) height, null);
+        } else {
+            g.drawImage(bossBulletLg, (int) x, (int) y, (int) width, (int) height, null);
+        }
     }
 
     @Override
     public Rectangle getBounds() {           // method that sets bounds for object collision
-        return new Rectangle((int)(x+width/2-5),(int)(y+height/2-5),5,5);
+        return new Rectangle((int)(x+width/2-1),(int)(y+height/2-1),1,1);
     }
 
     private void collision(){                // handles collision characteristics for this object

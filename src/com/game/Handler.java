@@ -8,7 +8,7 @@ public class Handler {
 
     LinkedList<GameObject> object = new LinkedList<GameObject>(); // initialize list of ALL GameObjects
 
-    public void tick(){                                 // syncronize all GameObjects in object list with game loop
+    public void tick(){                                 // synchronize all GameObjects in object list with game loop
        for(int i = 0; i < object.size(); i++){
            GameObject tempObject = object.get(i);
            tempObject.tick();
@@ -26,7 +26,7 @@ public class Handler {
             tempObject.render(g);                       // they are rendered here
         }
         for(int i = 0; i < nonTrails.size(); i++){
-            tempObject = object.get(i);
+                tempObject = object.get(i);
             tempObject.render(g);                       // all remaining objects are rendered here on top of the Trails
         }
         nonTrails.clear();                              // empties list of non Trail objects

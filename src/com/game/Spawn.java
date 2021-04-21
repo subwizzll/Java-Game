@@ -23,46 +23,116 @@ public class Spawn {
             bossSpawned = false;
             handler.addObject(
                     new Player(Game.WIDTH/2-32,Game.HEIGHT/2-32,
-                                32,32,
+                                64,64,
                                 0, GameObjectID.Player,
                                 handler,game));
-            handler.addObject(
-                    new Enemy(r.nextInt((int)Game.WIDTH), r.nextInt((int)Game.HEIGHT),
-                            16,16,
-                            5, GameObjectID.Enemy,
-                            handler,game));
+            for (int i = 0; i < 2; i++) {
+                handler.addObject(
+                        new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                                64, 64,
+                                3, GameObjectID.Enemy,
+                                handler, game));
+            }
             hud.setLevel(1);
         }
         if (!bossSpawned) {scoreKeep++;}
 
-        if(scoreKeep >= 200){
+        if(scoreKeep >= 500){
             scoreKeep = 0;
             hud.setLevel(hud.getLevel() + 1);
 
             if (hud.getLevel() == 2){
-                handler.addObject(
-                        new Enemy(r.nextInt((int)Game.WIDTH), r.nextInt((int)Game.HEIGHT),
-                                16,16,
-                                5, GameObjectID.Enemy,
-                                handler,game));
-            }
-            else if (hud.getLevel() == 3) {
                 for (int i = 0; i < 2; i++) {
                     handler.addObject(
-                        new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt((int) Game.HEIGHT),
-                                16, 16,
-                                5, GameObjectID.Enemy,
+                            new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                                    64, 64,
+                                    3, GameObjectID.Enemy,
+                                    handler, game));
+                }
+            }
+            else if (hud.getLevel() == 3) {
+
+                for (int i = 0; i < 3; i++) {
+                    handler.addObject(
+                        new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                                64, 64,
+                                3, GameObjectID.Enemy,
                                 handler, game));
                 }
             }
             else if (hud.getLevel() == 4) {
+
             handler.addObject(
-                    new SmartEnemy(r.nextInt((int)Game.WIDTH), r.nextInt((int)Game.HEIGHT),
-                            16,16,
+                    new SmartEnemy(r.nextInt((int)Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                            64,64,
                             5, GameObjectID.SmartEnemy,
                             handler,game));
+                for (int i = 0; i < 3; i++) {
+                    handler.addObject(
+                            new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                                    64, 64,
+                                    3, GameObjectID.Enemy,
+                                    handler, game));
+                }
             }
-            else if (hud.getLevel() == 5 && !bossSpawned) {
+            else if (hud.getLevel() == 5) {
+
+                for (int i = 0; i < 2; i++) {
+                    handler.addObject(
+                        new SmartEnemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT - 256) + 1) + 128,
+                                64, 64,
+                                5, GameObjectID.SmartEnemy,
+                                handler, game));
+                }
+                for (int i = 0; i < 4; i++) {
+                    handler.addObject(
+                        new Enemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT-256)+1)+128,
+                                64, 64,
+                                3, GameObjectID.Enemy,
+                                handler, game));
+                }
+            }
+            else if (hud.getLevel() == 6) {
+
+                for (int i = 0; i < 2; i++) {
+                    handler.addObject(
+                            new SmartEnemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT - 256) + 1) + 128,
+                                    64, 64,
+                                    5, GameObjectID.SmartEnemy,
+                                    handler, game));
+                }
+            }
+            else if (hud.getLevel() == 7) {
+
+                for (int i = 0; i < 3; i++) {
+                    handler.addObject(
+                            new SmartEnemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT - 256) + 1) + 128,
+                                    64, 64,
+                                    5, GameObjectID.SmartEnemy,
+                                    handler, game));
+                }
+            }
+            else if (hud.getLevel() == 8) {
+
+                for (int i = 0; i < 4; i++) {
+                    handler.addObject(
+                            new SmartEnemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT - 256) + 1) + 128,
+                                    64, 64,
+                                    5, GameObjectID.SmartEnemy,
+                                    handler, game));
+                }
+            }
+            else if (hud.getLevel() == 9) {
+
+                for (int i = 0; i < 4; i++) {
+                    handler.addObject(
+                            new SmartEnemy(r.nextInt((int) Game.WIDTH), r.nextInt(((int) Game.HEIGHT - 256) + 1) + 128,
+                                    64, 64,
+                                    5, GameObjectID.SmartEnemy,
+                                    handler, game));
+                }
+            }
+            else if (hud.getLevel() == 10 && !bossSpawned) {
                 handler.clearEnemies();
                 handler.addObject(
                     new EnemyBossJR((int)Game.WIDTH/2, -64,

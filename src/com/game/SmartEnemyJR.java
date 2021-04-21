@@ -2,7 +2,6 @@ package com.game;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Random;
 
 public class SmartEnemyJR extends GameObject{     // this class defines the characteristics of a smart enemy object
@@ -34,8 +33,14 @@ public class SmartEnemyJR extends GameObject{     // this class defines the char
 
     @Override
     public void tick() {                                // method to synchronize object with game loop
+        if(game.gameState == Game.STATE.GameOver ){
+            tracking = false;
+            x += r.nextInt(1) * velX;
+            y += r.nextInt(1) * velY;
+        }
         x += velX;
         y += velY;
+
         handler.addObject(new Trail(                    // trail effect
                 getCenterX(),getCenterY()+height/4,
                 width*.75f,height*.75f,
