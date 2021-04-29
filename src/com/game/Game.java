@@ -71,7 +71,7 @@ public class Game extends Canvas implements Runnable{
         // asks KeyInput class to listen for key input and assign
         this.addKeyListener(new KeyInput(handler,this));
         // call game window
-        new Window(WIDTH, HEIGHT, "Let's Build a Game!", this);
+        new Window(WIDTH, HEIGHT, "Dark Dungeon", this);
         // instantiate Spawner class object
         spawner = new Spawn(handler, hud, this);
         // listens for mouse input from the menu
