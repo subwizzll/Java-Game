@@ -1,7 +1,8 @@
 package com.game;
 
-public enum GameObjectID { // this class enables us to define unique characteristics for multiple instances
-                           // of the same Game Object child class
+// this class enables us to define unique characteristics for multiple instances
+// of the same Game Object child class
+public enum GameObjectID {
     Player(),
     Enemy(),
     SmartEnemy(),

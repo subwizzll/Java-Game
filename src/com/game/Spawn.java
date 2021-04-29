@@ -2,6 +2,7 @@ package com.game;
 
 import java.util.Random;
 
+// this class handles spawning of objects through out the course of the game events
 public class Spawn {
 
     private Handler handler;
@@ -17,6 +18,7 @@ public class Spawn {
         this.game = game;
     }
 
+    // checks for game level and executes events accordingly
     public void tick(){
         if(hud.getLevel() == 0){
             handler.object.clear();

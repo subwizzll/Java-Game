@@ -2,22 +2,30 @@ package com.game;
 
 import java.awt.*;
 
-public class HUD {                              // this class characterises the heads up display
+// this class characterises the heads up display
+public class HUD {
 
-    public static float health = 100;           // initialize health bar variables
-    public float greenValue = 255;              //
-    public float redValue = 0;                  //
-    private int score = 0;                      // score variable
-    private int level = 0;                      // level variable
+    // initialize health bar variables
+    public static float health = 100;
+    public float greenValue = 255;
+    public float redValue = 0;
+    // score variable
+    private int score = 0;
+    // level variable
+    private int level = 0;
 
-    public void tick(){                         // refresh health value
-        score++;//TODO implement different scoring system
-        health = Game.clamp(health,0,100); // prevents health from going to a negative value
-        greenValue = health * 255 / 100;             // transitions health from green to red
-        redValue = 255 - greenValue;                 //
+    // refresh health value
+    public void tick(){
+        score++;
+        // prevents health from going to a negative value
+        health = Game.clamp(health,0,100);
+        // transitions health from green to red
+        greenValue = health * 255 / 100;
+        redValue = 255 - greenValue;
     }
 
-    public void render(Graphics g){                 // health bar rendering parameters
+    // health bar rendering parameters
+    public void render(Graphics g){
         g.setColor(Color.gray);
         g.fillRect(15,15,200,32);
         g.setColor(new Color((int)redValue,(int)greenValue,0));

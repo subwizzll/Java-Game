@@ -37,20 +37,21 @@ public abstract class GameObject {
     public abstract void render(Graphics g);    // object rendering method
     public abstract Rectangle getBounds();      // method that sets bounds for object collision
 
-    // getter and setter methods, possibly redundant
-    public void setX(float x) { this.x = x; }
+    public void setWidth(float width) {
+        this.width = width;
+    }
 
-    public void setY(float y) { this.y = y; }
+    public void setHeight(float height) {
+        this.height = height;
+    }
 
-    public void setWidth(float width) { this.width = width; }
+    public void setVelX(float velX) {
+        this.velX = velX;
+    }
 
-    public void setHeight(float height) { this.height = height; }
-
-    public void setVelX(float velX) { this.velX = velX; }
-
-    public void setVelY(float velY) { this.velY = velY; }
-
-    public void setId(GameObjectID id) { this.id = id; }
+    public void setVelY(float velY) {
+        this.velY = velY;
+    }
 
     public float getCenterX() {
         return this.x+ this.width/2;
@@ -60,9 +61,13 @@ public abstract class GameObject {
         return this.y+ this.height/2;
     }
 
-    public float getWidth() { return width; }
+    public float getWidth() {
+        return width;
+    }
 
-    public float getHeight() { return height; }
+    public float getHeight() {
+        return height;
+    }
 
     public Line2D getTop() {
         top = new Line2D.Float(this.x, this.y, this.x+this.width, this.y);
@@ -84,10 +89,7 @@ public abstract class GameObject {
         return left;
     }
 
-    public float getVelX() { return velX; }
-
-    public float getVelY() { return velY; }
-
-    public GameObjectID getId() { return id; }
-
+    public GameObjectID getId() {
+        return id;
+    }
 }

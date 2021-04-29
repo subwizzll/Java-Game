@@ -7,35 +7,50 @@ import java.io.IOException;
 import java.io.Serial;
 import java.util.Random;
 
-
+// core class of the game
 public class Game extends Canvas implements Runnable{
 
     @Serial
     private static final long serialVersionUID = 8738526053709115505L;
 
-    public static float WIDTH = 1280;              // initialize window size constants
-    public static float HEIGHT = WIDTH / 16 * 9;  //
+    // initialize window size constants
+    public static float WIDTH = 1280;              
+    public static float HEIGHT = WIDTH / 16 * 9;
+    
+    // pause variable
     public static boolean paused = false;
-    private Thread thread;                        // initialize Game thread
-    private boolean running = false;              //
-    private BufferedImage[][] wallImage = new BufferedImage[(int)HEIGHT/64][(int)WIDTH/64];
-    private BufferedImage spriteSheet = null;
+    // initialize Game thread
+    private Thread thread;                        
+    private boolean running = false;
+    // initialize background image + sprite sheet variable
+    private BufferedImage[][] backGroundImages = new BufferedImage[(int)HEIGHT/64][(int)WIDTH/64];
     private BufferedImage backGround;
-    private Handler handler;                      // initialize object handler
-    private Menu menu;     // initialize menu variable
-    private HUD hud;                              // initialize heads up display
-    private Spawn spawner;                        // initialize spawner
-    public enum STATE{                            // handles shift between launch menu and game
-        Menu,                                     //
-        Settings,                                 //
-        HowToPlay,                                //
-        Game,                                     //
+    private BufferedImage spriteSheet = null;
+    // initialize object handler
+    private Handler handler;
+    // initialize menu variable
+    private Menu menu;
+    // initialize heads up display
+    private HUD hud;
+    // initialize spawner
+    private Spawn spawner;
+
+    // list of game states
+    public enum STATE{
+        Menu,
+        Settings,
+        HowToPlay,
+        Game,
         GameWon,
         GameOver
-        }
+    }
+
+    // initialize game state
     public STATE gameState = STATE.Menu;
+
     private Random r = new Random();
 
+    // load sprite sheet
     public void init(){
         BufferedImageLoader loader = new BufferedImageLoader();
         try {
@@ -45,77 +60,108 @@ public class Game extends Canvas implements Runnable{
         }
     }
 
-    public Game() {                                     // game constructor
-        handler = new Handler();                        // instantiate object handler class object
-        hud = new HUD();                                // instantiate HUD class object
+    // game constructor
+    public Game() {
+        // instantiate object handler class object
+        handler = new Handler();
+        // instantiate HUD class object
+        hud = new HUD();
+        // instantiate menu
         menu = new Menu(this,handler,hud);
-        this.addKeyListener(new KeyInput(handler,this));     // asks KeyInput class to listen for key input and assign
-        new Window(WIDTH, HEIGHT, "Let's Build a Game!", this); // call game window
-        spawner = new Spawn(handler, hud, this);  // instantiate Spawner class object
-        this.addMouseListener(menu);                    // listens for mouse input from the menu
-        backGround = setWalls(wallImage);
+        // asks KeyInput class to listen for key input and assign
+        this.addKeyListener(new KeyInput(handler,this));
+        // call game window
+        new Window(WIDTH, HEIGHT, "Let's Build a Game!", this);
+        // instantiate Spawner class object
+        spawner = new Spawn(handler, hud, this);
+        // listens for mouse input from the menu
+        this.addMouseListener(menu);
+        // set back ground image
+        backGround = setBackground(backGroundImages);
     }
 
-    public synchronized void start(){                   // executes Game thread
+    // executes Game thread
+    public synchronized void start(){
         thread = new Thread(this);
         thread.start();
         running = true;
     }
 
-    public synchronized void stop(){                    // stops Game thread
-        try{                                            // prints a stack trace if failed
+    // stops Game thread
+    public synchronized void stop(){
+        try{
             thread.join();
             running = false;
         }catch(Exception e){
+            // prints a stack trace if failed
             e.printStackTrace();
         }
     }
 
+    // game loop - synchronizes all game object tick methods
     public void run(){
         init();
-        this.requestFocus();                            // sets focus to game window when launched
+        // sets focus to game window when launched
+        this.requestFocus();
         /* this loop sets the pace of the game environment */
-        long lastTime = System.nanoTime();              // returns:the current value of the running JVM time in nanosecs
-        double amountOfTicks = 60.0;                    // seconds in a minute
-        double ns = 1000000000 / amountOfTicks;         // nanoseconds in a second / seconds in minute
-        double delta = 0;                               // variable used to calculate loop timer floatervals
-        long timer = System.currentTimeMillis();        // returns:the current time in milliseconds
+        // returns:the current value of the running JVM time in nanosecs
+        long lastTime = System.nanoTime();
+        // seconds in a minute
+        double amountOfTicks = 60.0;
+        // nanoseconds in a second / seconds in minute
+        double ns = 1000000000 / amountOfTicks;
+        // variable used to calculate loop timer floatervals
+        double delta = 0;
+        // returns:the current time in milliseconds
+        long timer = System.currentTimeMillis();
         int updates = 0;
-        int frames = 0;                                 // frames variable for framerate
-        while(running){                                 // loop runs while game thread is actively running
-            long now = System.nanoTime();               // returns:the current value of the running JVM time in nanosecs
-            delta += (now - lastTime) / ns;             // calculate time interval of loop
-            lastTime = now;                             // resets interval
-            while(delta >= 1){                          // if delta is >= new ticks are called until its value falls
+        // frames variable for framerate
+        int frames = 0;
+        // loop runs while game thread is actively running
+        while(running){
+            // returns:the current value of the running JVM time in nanosecs
+            long now = System.nanoTime();
+            // calculate time interval of loop
+            delta += (now - lastTime) / ns;
+            // resets interval
+            lastTime = now;
+            // if delta is >= new ticks are called until its value falls
+            while(delta >= 1){
                 tick();
                 updates++;
                 delta--;
             }
-            if(running){                                // renders new screen if game is still running
+            // renders new screen if game is still running
+            if(running){
                 try {
                     render();
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            frames++;                                   // increment frame count
-
-            if(System.currentTimeMillis() - timer > 1000){  //if (loop start time to now) > 1 second print results
-                timer += 1000;                              // increment timer by 1 second
-                System.out.println(updates + " Ticks, FPS: " + frames); // results string
-                updates = 0;                            // refresh frame and update record
-                frames = 0;                             //
+            // increment frame count
+            frames++;
+            //if (loop start time to now) > 1 second print results
+            if(System.currentTimeMillis() - timer > 1000){
+                // increment timer by 1 second
+                timer += 1000;
+                // results string
+                System.out.println(updates + " Ticks, FPS: " + frames);
+                // refresh frame and update record
+                updates = 0;
+                frames = 0;
             }
         }
         stop();
     }
 
-    private void tick(){                                // this method synchronizes all game objects
-        if(gameState == STATE.Game){                    //
+    // this method synchronizes all game objects with the game loop
+    private void tick(){
+        if(gameState == STATE.Game){
             if(!paused) {
-                handler.tick();                             // with the game loop
-                hud.tick();                                 //
-                spawner.tick();                             //
+                handler.tick();
+                hud.tick();
+                spawner.tick();
                 if (HUD.health <= 0) {
                     HUD.health = 100;
                     gameState = STATE.GameOver;
@@ -123,53 +169,62 @@ public class Game extends Canvas implements Runnable{
             }else{
                 menu.tick();
             }
-        }else{                                          //
-            menu.tick();                                //
-            handler.tick();                             // with the game loop
+        }else{
+            menu.tick();
+            handler.tick();
 
         }
     }
 
-    private void render(){                              // rendering method called by game loop in run()
-        BufferStrategy bs = this.getBufferStrategy();   //
-        if(bs == null){                                 //
-            this.createBufferStrategy(3);     //
-            return;                                     //
+    // rendering method called by game loop in run()
+    private void render(){
+        BufferStrategy bs = this.getBufferStrategy();
+        if(bs == null){
+            this.createBufferStrategy(3);
+            return;
         }
 
-        Graphics g = bs.getDrawGraphics();              // creates a graphics context for the drawing buffer
-
+        // creates a graphics context for the drawing buffer
+        Graphics g = bs.getDrawGraphics();
+        // render back ground image
         g.drawImage(backGround,0,0,null);
-            handler.render(g);                              // render all game objects
+        // render all game objects
+        handler.render(g);
 
-        if(gameState == STATE.Game && !paused){         // renders proper environment in correspondence with current
-            hud.render(g);                              // STATE
-        }else{                                          //
-            menu.render(g);                             //
+        // renders proper environment in correspondence with current state
+        if(gameState == STATE.Game && !paused){
+            hud.render(g);
+        }else{
+            menu.render(g);
         }
 
-
-        g.dispose();                                    // releases graphics to be rendered
-        bs.show();                                      //
+        // releases graphics to be rendered
+        g.dispose();
+        bs.show();
     }
 
-    public static float clamp(float var, float min, float max){  // this method can be used to prevents objects
-        if (var >= max)                                          // from leaving a defined range
+    // this method can be used to prevents objects from leaving a defined range
+    public static float clamp(float var, float min, float max){
+        if (var >= max)
             return max;
         else return Math.max(var, min);
     }
 
+    // main method
     public static void main(String[] args) {
         new Game();
     }
 
+    // gets sprite sheet from resources folder
     public BufferedImage getSpriteSheet(){
         return spriteSheet;
     }
+
     public static int getRandom(int[][] array) {
         return new Random().nextInt(array.length);
     }
 
+    // joins randomly chosen back ground images
     public static BufferedImage joinBufferedImage(BufferedImage[][] img) {
 
         //create a new buffer and draw two image into the new image
@@ -187,7 +242,8 @@ public class Game extends Canvas implements Runnable{
         return newImage;
     }
 
-    public BufferedImage setWalls(BufferedImage[][] img){
+    // randomly picks sprite sheet images for back ground and assigns to an array
+    public BufferedImage setBackground(BufferedImage[][] img){
         SpriteSheet ss = new SpriteSheet(this.getSpriteSheet());
         int[][] wallCells = new int[][] {{2,2},{2,2},{2,2},{2,2},{2,4},{2,5},{1,4},{1,5}};
         int[][] floorCells1 = new int[][]{{3,1},{3,2},{3,3}};

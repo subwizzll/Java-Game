@@ -3,24 +3,29 @@ package com.game;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+// this class handles game controls
 public class KeyInput extends KeyAdapter {
 
-    private Handler handler;                    // initialize object handler for assigning key inputs
+    // initialize object handler for assigning key inputs
+    private Handler handler;
     private Game game;
     private boolean[] keyPressed = new boolean[] {false, false, false, false};
 
-    public KeyInput(Handler handler, Game game){           // method for receiving object handler
-        this.handler = handler;                             //
+    // method for receiving object handler
+    public KeyInput(Handler handler, Game game){
+        this.handler = handler;
         this.game = game;
     }
 
+    // handles events for key press
     @Override
-    public void keyPressed(KeyEvent e) {        // handles events for key press
+    public void keyPressed(KeyEvent e) {
         if (game.gameState == Game.STATE.Game) {
             int key = e.getKeyCode();
             for (int i = 0; i < handler.object.size(); i++) {
                 GameObject tempObject = handler.object.get(i);
-                if (tempObject.getId() == GameObjectID.Player) {            // key events for Player()
+                // key events for Player()
+                if (tempObject.getId() == GameObjectID.Player) {
                     float speed = 6.0f;
                     if (key == KeyEvent.VK_W) {
                         tempObject.setVelY(-speed);
@@ -43,13 +48,15 @@ public class KeyInput extends KeyAdapter {
         }
     }
 
+    // handles events for key releases
     @Override
-    public void keyReleased(KeyEvent e) {                             // handles events for key releases
+    public void keyReleased(KeyEvent e) {
         if (game.gameState == Game.STATE.Game) {
             int key = e.getKeyCode();
             for (int i = 0; i < handler.object.size(); i++) {
                 GameObject tempObject = handler.object.get(i);
-                if (tempObject.getId() == GameObjectID.Player) {            // key events for Player()
+                // key events for Player()
+                if (tempObject.getId() == GameObjectID.Player) {
                     if (key == KeyEvent.VK_W) keyPressed[0] = false;
                     if (key == KeyEvent.VK_S) keyPressed[1] = false;
                     if (key == KeyEvent.VK_A) keyPressed[2] = false;
@@ -63,7 +70,5 @@ public class KeyInput extends KeyAdapter {
                 else Game.paused = false;
             }
         }
-//        if(key == KeyEvent.VK_ESCAPE && game.paused) game.paused = false;
-//        if(key == KeyEvent.VK_ESCAPE) System.exit(1);           // close game window with escape key
     }
 }

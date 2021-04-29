@@ -4,14 +4,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-public class EnemyBossJR extends GameObject{      // this class defines the characteristics of a basic enemy object
+// this class defines the characteristics of the enemy boss object
+public class EnemyBossJR extends GameObject{
 
+    // boss timer variable
     private int timer = 0;
     private Random r = new Random();
+    // object sprite
     private BufferedImage boss;
 
 
-
+    // constructor
     public EnemyBossJR(float x, float y,
                        float width, float height,
                        float vel, GameObjectID id,
@@ -19,6 +22,7 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
 
         super(x, y, width, height, vel, id, handler, game);
 
+        // allows certain events if boss is present
         Spawn.bossSpawned = true;
 
         SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
@@ -27,12 +31,13 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
 
     }
 
+    // method to synchronize object with game loop
     @Override
-    public void tick() {                    // method to synchronize object with game loop
-        if(y < 50 && timer == 0) {          // timer starts when boss reaches panning home
+    public void tick() {
+        if(y < 50 && timer == 0) {
             y += velY;
-        }
-        else {
+        }else {
+            // timer starts when boss reaches panning home
             timer++;
             if(velX < 3) {
                 x += velX * (float) (timer / 100);
@@ -42,8 +47,10 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
             }
         }
         if (timer > 0 && timer < 3000) {
-            if (x <= 0 || x >= Game.WIDTH - width) velX *= -1;  // prevents object from leaving the window
-        if (timer % 25 == 0 ){                               // fires smart enemies every 0.5 seconds
+            // prevents object from leaving the window
+            if (x <= 0 || x >= Game.WIDTH - width) velX *= -1;
+        if (timer % 25 == 0 ){
+                // fires smart enemies every 0.5 seconds
                 handler.addObject(new SmartEnemyJR(
                         (int)x+width/2,(int)y+height/2,
                         32,32,
@@ -51,6 +58,7 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
                         handler, game));
         }
         if (timer >= 1500 && timer % 150 == 0){
+            // fires scattering projectiles
             for (int i = -2; i <= 2; i++) {
                 handler.addObject(new EnemyBossProjectileJR(
                         (int)x+width/2,(int)y+height/2,
@@ -60,31 +68,36 @@ public class EnemyBossJR extends GameObject{      // this class defines the char
             }
         }
         }else if(timer > 3000){
+            // boss leaves the stage
             velX = 0;
             velY = -5;
             y += velY;
         }
         if(timer > 3000 && y < -64){
+            // boss object removed after leaving stage
             Spawn.bossSpawned = false;
 
             handler.removeObject(this);
 
             if (game.gameState == Game.STATE.Game) game.gameState = Game.STATE.GameWon;
         }
+        // collision check - not defined
         collision();
     }
 
+    // object rendering method
     @Override
-    public void render(Graphics g) {        // object rendering method
-
+    public void render(Graphics g) {
         g.drawImage(boss,(int)x,(int)y,(int)width,(int)height,null);
     }
 
+    // method that sets bounds for object collision
     @Override
     public Rectangle getBounds() {           // method that sets bounds for object collision
         return new Rectangle((int)x,(int)y,(int)width,(int)height);
     }
 
-    private void collision(){                // handles collision characteristics for this object
+    // handles collision characteristics for this object
+    private void collision(){
     }
 }

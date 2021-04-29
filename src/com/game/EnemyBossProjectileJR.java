@@ -5,10 +5,13 @@ import java.awt.image.BufferedImage;
 
 public class EnemyBossProjectileJR extends GameObject {      // this class defines the characteristics of a basic enemy object
 
+    // object sprites
     private BufferedImage bossBulletLg, bossBulletSm;
 
+    // animation variable
     private boolean isSmall = false;
 
+    // constructor
     public EnemyBossProjectileJR(float x, float y,
                                  float width, float height,
                                  float vel, GameObjectID id,
@@ -24,9 +27,11 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
         bossBulletSm = ss.getImage(14,4,16,16);
     }
 
+    // method to synchronize object with game loop
     @Override
-    public void tick() {                    // method to synchronize object with game loop
-        handler.addObject(new Trail(                    // trail effect
+    public void tick() {
+        // trail effect
+        handler.addObject(new Trail(
                 getCenterX(),getCenterY(),
                 width*.75f,height*.75f,
                 0,GameObjectID.Trail,handler,
@@ -34,8 +39,9 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
         x += velX;
         y += velY;
 
-        if(x <= 0 || x >= Game.WIDTH - width) velX *= -1;  // prevents object from leaving the window
-        if(y >= Game.HEIGHT - height) velY *= -1;           //
+        // prevents object from leaving the window
+        if(x <= 0 || x >= Game.WIDTH - width) velX *= -1;
+        if(y >= Game.HEIGHT - height) velY *= -1;
         if(x == 0) handler.removeObject(this);
 
         ticker++;
@@ -48,11 +54,13 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
             collision = true;
             ticker = 0;
         }
+        // collision check
         collision();
     }
 
+    // object rendering method and animation logic
     @Override
-    public void render(Graphics g) {        // object rendering method and animation logic
+    public void render(Graphics g) {
         if (isSmall) {
             g.drawImage(bossBulletSm, (int) x, (int) y, (int) width, (int) height, null);
         } else {
@@ -60,12 +68,14 @@ public class EnemyBossProjectileJR extends GameObject {      // this class defin
         }
     }
 
+    // method that sets bounds for object collision
     @Override
     public Rectangle getBounds() {           // method that sets bounds for object collision
         return new Rectangle((int)(x+width/2-1),(int)(y+height/2-1),1,1);
     }
 
-    private void collision(){                // handles collision characteristics for this object
+    // handles collision characteristics for this object
+    private void collision(){
         if (collision){
             for (int i = 0; i < handler.object.size(); i++) {
                 GameObject tempObject = handler.object.get(i);

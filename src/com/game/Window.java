@@ -4,13 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serial;
 
-public class Window extends Canvas{                             // class to initialize main game window
+// class to initialize main game window
+public class Window extends Canvas{
 
 
     @Serial
     private static final long serialVersionUID = 5070093916032438121L;
 
-    public Window(float width, float height, String title, Game game) { // window constructor sets parameters
+    // window constructor sets parameters
+    public Window(float width, float height, String title, Game game) {
 
         JFrame frame = new JFrame(title);
 
@@ -18,11 +20,13 @@ public class Window extends Canvas{                             // class to init
         frame.setMaximumSize(new Dimension((int)width,(int)height));
         frame.setMinimumSize(new Dimension((int)width,(int)height));
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // enables closing of game thread window with X button
+        // enables closing of game thread window with X button
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.add(game);
         frame.setVisible(true);
-        game.start();                                           // launches Game class (main)
+        // launches Game
+        game.start();
     }
 }

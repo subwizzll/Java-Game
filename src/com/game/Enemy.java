@@ -3,12 +3,16 @@ package com.game;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Enemy extends GameObject {      // this class defines the characteristics of a basic enemy object
+// this class defines the characteristics of a basic enemy object
+public class Enemy extends GameObject {
 
+    // object sprites
     private BufferedImage bulletLg, bulletSm;
 
+    // animation variable
     private boolean isSmall = false;
 
+    // constructor
     public Enemy(float x, float y,
                  float width, float height,
                  float vel, GameObjectID id,
@@ -23,19 +27,25 @@ public class Enemy extends GameObject {      // this class defines the character
 
     }
 
+    // method to synchronize object with game loop
     @Override
-    public void tick() {                    // method to synchronize object with game loop
-        handler.addObject(new Trail(                    // trail effect
+    public void tick() {
+        // trail effect
+        handler.addObject(new Trail(
                 getCenterX(),getCenterY(),
                 width*.5f,height*.5f,
                 0,GameObjectID.Trail,handler,
                 game,0.1f,Color.green));
+
+        // update position
         x += velX;
         y += velY;
 
-        if(x <= 0 || x >= Game.WIDTH - width) velX *= -1;  // prevents object from leaving the window
+        // prevents object from leaving the window
+        if(x <= 0 || x >= Game.WIDTH - width) velX *= -1;
         if(y <= 128 || y >= Game.HEIGHT - (height+height/2)) velY *= -1; //
 
+        // animation ticker
         ticker++;
         if (ticker == 20){
             if(isSmall){
@@ -46,6 +56,7 @@ public class Enemy extends GameObject {      // this class defines the character
             collision = true;
             ticker = 0;
         }
+        // collision check
         try{
             collision();
         }catch (Exception ex){
@@ -54,8 +65,9 @@ public class Enemy extends GameObject {      // this class defines the character
 
     }
 
+    // object rendering method and animation logic
     @Override
-    public void render(Graphics g) {        // object rendering method and animation logic
+    public void render(Graphics g) {
         if (isSmall) {
             g.drawImage(bulletSm, (int) x, (int) y, (int) width, (int) height, null);
         } else {
@@ -63,12 +75,14 @@ public class Enemy extends GameObject {      // this class defines the character
         }
     }
 
+    // method that sets bounds for object collision
     @Override
-    public Rectangle getBounds() {           // method that sets bounds for object collision
+    public Rectangle getBounds() {
         return new Rectangle((int)(x+width/2-1),(int)(y+height/2-1),1,1);
     }
 
-    private void collision(){                // handles collision characteristics for this object
+    // handles collision characteristics for this object - this object has a bounce effect
+    private void collision(){
         if (collision){
             for (int i = 0; i < handler.object.size(); i++) {
                 GameObject tempObject = handler.object.get(i);
